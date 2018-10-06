@@ -1,0 +1,53 @@
+#
+version: '2'
+
+volumes:
+  db:
+    driver: local
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/uploads.conf:/usr/local/etc/php/conf.d/uploads.conf
+    volumes_from:
+      - php
+
+
+  php:
+    build: ./docker/php/
+    expose:
+      - 9000
+    volumes:
+      - ./src/:/var/www/html
+      - ./docker/php/fdm-www.conf:/usr/local/etc/php-fpm.d/fdm-www.conf
+
+  mysql:
+    image: mysql:latest
+    expose:
+      - 3306
+    volumes:
+      - ./volumes/db:/var/lib/mysql
+    volumes_from:
+      - php
+    environment:
+      MYSQL_ROOT_PASSWORD: evolution
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - TESTSUITE_PASSWORD=evolution
+    depends_on:
+      - mysql
+    ports:
+     - 8080:80
+    volumes:
+     - /sessions

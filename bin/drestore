@@ -1,0 +1,4 @@
+sudo rm ./volumes/db -rf
+sudo rm ./src/wordpress -rf
+sudo cp ./clean/db ./volumes/ -R
+sudo cp ./clean/wordpress ./src/ -R

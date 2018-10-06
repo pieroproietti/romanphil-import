@@ -1,0 +1,8 @@
+#/bin/bash
+if [[ "$1" != "" ]]; then
+  var="romanphil_$1_1"
+else
+  var="romanphil_php_1"
+fi
+echo "Connect to container: $var";
+docker exec -it $var bash
